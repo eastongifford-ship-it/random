@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas GPA Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1>📚 Canvas GPA Tracker</h1>
+        <p class="subtitle">Real-time GPA monitoring from Canvas</p>
+      </div>
+      <div class="header-status" id="connectionStatus">
+        <span class="status-indicator"></span>
+        <span>Not Connected</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Setup Section -->
+      <section class="section setup-section" id="setupSection">
+        <h2>Setup Canvas Connection</h2>
+        <p>Enter your Canvas credentials to get started.</p>
+        <form id="setupForm" class="form">
+          <div class="form-group">
+            <label for="baseURL">Canvas Base URL</label>
+            <input 
+              type="url" 
+              id="baseURL" 
+              name="baseURL" 
+              placeholder="https://your-institution.instructure.com"
+              required
+            >
+            <small>Example: https://canvas.example.edu</small>
+          </div>
+
+          <div class="form-group">
+            <label for="apiToken">Canvas API Token</label>
+            <input 
+              type="password" 
+              id="apiToken" 
+              name="apiToken" 
+              placeholder="Your Canvas API token"
+              required
+            >
+            <small>
+              Get your token: 
+              <a href="#" onclick="alert('Go to Settings > Approved Integrations > New Access Token'); return false;">
+                How to get token
+              </a>
+            </small>
+          </div>
+
+          <button type="submit" class="button button-primary">Connect to Canvas</button>
+        </form>
+      </section>
+
+      <!-- Dashboard Section -->
+      <section class="section dashboard-section hidden" id="dashboardSection">
+        <!-- User Info -->
+        <div class="user-info-card" id="userInfoCard">
+          <div class="user-avatar">👤</div>
+          <div class="user-details">
+            <h3 id="userName">Loading...</h3>
+            <p id="userEmail">student@example.com</p>
+          </div>
+        </div>
+
+        <!-- GPA Summary -->
+        <div class="gpa-summary">
+          <div class="gpa-card">
+            <h3>Current GPA</h3>
+            <div class="gpa-value" id="currentGPA">-</div>
+            <small id="gpaLastUpdated">Last updated: -</small>
+          </div>
+
+          <div class="gpa-card">
+            <h3>Weighted GPA</h3>
+            <div class="gpa-value" id="weightedGPA">-</div>
+            <small>Across all courses</small>
+          </div>
+
+          <div class="gpa-card">
+            <h3>Courses</h3>
+            <div class="gpa-value" id="courseCount">-</div>
+            <small>Active courses</small>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button id="refreshBtn" class="button button-secondary">🔄 Refresh Now</button>
+          <button id="toggleUpdatesBtn" class="button button-secondary">▶️ Start Auto-Update</button>
+          <button id="exportBtn" class="button button-secondary">📥 Export CSV</button>
+          <button id="disconnectBtn" class="button button-danger">Disconnect</button>
+        </div>
+
+        <!-- Notifications -->
+        <div class="notifications" id="notificationsContainer"></div>
+
+        <!-- Grades Table -->
+        <div class="grades-section">
+          <h2>Course Grades</h2>
+          <div class="table-container">
+            <table class="grades-table" id="gradesTable">
+              <thead>
+                <tr>
+                  <th>Course Name</th>
+                  <th>Grade %</th>
+                  <th>Letter</th>
+                  <th>GPT Point</th>
+                </tr>
+              </thead>
+              <tbody id="gradesTableBody">
+                <tr>
+                  <td colspan="4" class="loading">Loading grades...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GPA History Chart -->
+        <div class="history-section">
+          <h2>GPA History (Last 30 Days)</h2>
+          <div class="chart-container">
+            <canvas id="gpaChart"></canvas>
+            <p id="noHistoryMessage" class="no-data">No history data yet. Check back later!</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Canvas GPA Tracker • Built for students • Data stays private on your device</p>
+    </footer>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
