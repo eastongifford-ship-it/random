@@ -144,7 +144,18 @@ async function refreshGPA() {
 
     showToast('GPA updated successfully', 'success');
   } catch (error) {
-    showToast(`Error refreshing GPA: ${error.message}`, 'error');
+    // if server provided details, include those
+    let msg = error.message;
+    if (error.response) {
+      msg = `${error.response.status} ${error.response.statusText}`;
+      try {
+        const data = await error.response.json();
+        if (data && data.error) msg += ` - ${data.error}`;
+      } catch {
+        // ignore parse errors
+      }
+    }
+    showToast(`Error refreshing GPA: ${msg}`, 'error');
   } finally {
     refreshBtn.disabled = false;
   }

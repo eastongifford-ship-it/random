@@ -19,12 +19,34 @@ class GPACalculator {
     const processedCourses = [];
 
     courses.forEach(course => {
-      if (!course.current_final_grade && course.current_final_grade !== 0) {
-        return; // Skip courses without grades
+      // Try multiple common Canvas fields for a final/current grade
+      let gradeValue = null;
+
+      if (course.current_final_grade !== undefined && course.current_final_grade !== null) {
+        gradeValue = course.current_final_grade;
+      } else if (course.enrollments && course.enrollments.length > 0) {
+        const enrollment = course.enrollments[0];
+        if (enrollment.computed_final_score !== undefined && enrollment.computed_final_score !== null) {
+          gradeValue = enrollment.computed_final_score;
+        } else if (enrollment.computed_current_score !== undefined && enrollment.computed_current_score !== null) {
+          gradeValue = enrollment.computed_current_score;
+        } else if (enrollment.grades) {
+          if (enrollment.grades.final_score !== undefined && enrollment.grades.final_score !== null) {
+            gradeValue = enrollment.grades.final_score;
+          } else if (enrollment.grades.current_score !== undefined && enrollment.grades.current_score !== null) {
+            gradeValue = enrollment.grades.current_score;
+          }
+        }
       }
 
-      const grade = parseFloat(course.current_final_grade);
-      const credits = course.total_weight || 1; // Default to 1 credit if not specified
+      if (gradeValue === null || gradeValue === undefined) {
+        return; // Skip courses without usable grade information
+      }
+
+      const grade = parseFloat(gradeValue);
+      if (isNaN(grade)) return;
+
+      const credits = course.total_weight || course.credit_hours || 1; // Default to 1 credit if not specified
 
       const gradePoint = this.gradeToPoint(grade);
       

@@ -22,6 +22,12 @@ let gradeHistory = new GradeHistory('./data');
 let lastGPAData = null;
 let updateInterval = null;
 
+// Auto-initialize Canvas API from environment variables if provided
+if (process.env.CANVAS_BASE_URL && process.env.CANVAS_API_TOKEN) {
+  initializeCanvasAPI(process.env.CANVAS_BASE_URL, process.env.CANVAS_API_TOKEN);
+  console.log('Canvas API auto-initialized from environment variables');
+}
+
 /**
  * Initialize Canvas API connection
  */
@@ -53,7 +59,12 @@ async function fetchCurrentGPA() {
 
     return gpaData;
   } catch (error) {
-    console.error('Error fetching current GPA:', error.message);
+    // log the canvas error if available
+    if (error.response) {
+      console.error('Error fetching current GPA:', error.message, 'status', error.response.status, 'data', error.response.data);
+    } else {
+      console.error('Error fetching current GPA:', error.message);
+    }
     throw error;
   }
 }
@@ -126,6 +137,14 @@ app.get('/api/gpa/current', async (req, res) => {
     const gpaData = await fetchCurrentGPA();
     res.json(gpaData);
   } catch (error) {
+    // propagate status and details when thrown by axios
+    if (error.response) {
+      const status = error.response.status || 500;
+      return res.status(status).json({
+        error: error.message,
+        details: error.response.data || null
+      });
+    }
     res.status(500).json({ error: error.message });
   }
 });

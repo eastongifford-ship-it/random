@@ -54,11 +54,17 @@ cp .env.example .env
 
 4. **Configure .env file:**
 ```
+# Base URL should be the main Canvas domain – **DO NOT** include `/api/v1` at the end.
+# Example: https://your-institution.instructure.com
 CANVAS_BASE_URL=https://your-institution.instructure.com
 CANVAS_API_TOKEN=your_canvas_api_token_here
 PORT=3000
 UPDATE_INTERVAL=300000
 ```
+
+> ⚠️ A 404 error when the server tries to fetch courses usually means the base URL
+> was incorrect (often because it already contained `/api/v1`). Confirm the URL and
+> try again.
 
 ## Getting Your Canvas API Token
 

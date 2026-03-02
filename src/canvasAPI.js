@@ -18,15 +18,18 @@ class CanvasAPI {
    */
   async getCourses() {
     try {
-      const response = await this.client.get('/api/v1/courses', {
+      // Use the user courses endpoint and include enrollments so we can access grade info
+      const response = await this.client.get('/api/v1/users/self/courses', {
         params: {
           per_page: 100,
-          include: ['term']
+          include: ['term', 'enrollments']
         }
       });
       return response.data;
     } catch (error) {
-      console.error('Error fetching courses:', error.message);
+      // include more context when logging so that 404s or other status codes are easier
+      let details = error.response ? ` status=${error.response.status} data=${JSON.stringify(error.response.data)}` : '';
+      console.error('Error fetching courses:', error.message + details);
       throw error;
     }
   }

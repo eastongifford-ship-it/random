@@ -26,11 +26,17 @@ cp .env.example .env
 
 Edit `.env` and add:
 ```
+# the root URL for your institution's Canvas instance – **do not include** `/api/v1`.
+# e.g. https://your-institution.instructure.com
 CANVAS_BASE_URL=https://your-institution.instructure.com
 CANVAS_API_TOKEN=your_token_here
 PORT=3000
 UPDATE_INTERVAL=300000
 ```
+
+> ⚠️ A 404 when fetching courses usually means the base URL was wrong (often because it already
+> contains `/api/v1`). If you see `Request failed with status code 404` in the server log, verify
+> that `CANVAS_BASE_URL` points just to the domain and try again.
 
 ## 4. Start the Server (1 min)
 
